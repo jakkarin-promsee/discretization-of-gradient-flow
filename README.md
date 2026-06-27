@@ -84,11 +84,11 @@ $$\text{Implicit GD} > \text{Explicit GD}, \quad \text{Newton GD is unstable}$$
 
 ```bash
 Project/
-├── Custom_library/
+├── custom_library/
 │    │
 │    ├── core/               # The absolute fundamentals of all models
-│    │   ├── baseLrModels.py             # base models funciton: getHistory(), predict(), save(), etc.
-│    │   └── baseLrModelsImplementHessain.py         # implement compute tools: computeLoss(), computeGradient(), computeHessain()
+│    │   ├── baseLrModels.py             # base model functions: getHistory(), predict(), save(), etc.
+│    │   └── baseLrModelsImplementHessain.py         # compute tools: compute_loss(), compute_gradient(), compute_hessian()
 │    │
 │    ├── layers/             # Pure layer implementations
 │    │   ├── denseLayer.py
@@ -110,7 +110,7 @@ Project/
 └── README.md       # Experiment report, including all description
 ```
 
-## Mathematic Proof
+## Mathematical Proof
 
 ### 1. The origin of each discretization types
 
@@ -120,15 +120,15 @@ The Taylor series gives an approximation of $L(\theta)$ around the current point
 
 $$
 L(\theta + \Delta \theta) \approx L(\theta) + (\nabla L(\theta))^T (\Delta \theta) +
-(\Delta \theta)^T(\nabla^2 L(\theta)) (\Delta \theta) + \cdots
+\frac{1}{2}(\Delta \theta)^T(\nabla^2 L(\theta)) (\Delta \theta) + \cdots
 $$
 
 $$
 L(\theta + \Delta \theta) \approx L(\theta) + g_t^T (\Delta \theta) +
-(\Delta \theta)^T H_t (\Delta \theta) + \cdots
+\frac{1}{2}(\Delta \theta)^T H_t (\Delta \theta) + \cdots
 $$
 
-#### 1.1 Explicit Gradient Descend (Normal Gradient Descend)
+#### 1.1 Explicit Gradient Descent (Normal Gradient Descent)
 
 Explicit gradient descent uses only the first-order terms of the Taylor series.
 
@@ -136,13 +136,13 @@ We choose $\Delta \theta$ to maximize the decrease in the loss under the linear 
 
 $$
 \Delta L \approx (\nabla L(\theta))^T \Delta \theta
-\approx Minimize(\lVert \nabla L(\theta) \rVert \lVert \Delta \theta \rVert \cos (\phi))
+= \lVert \nabla L(\theta) \rVert \lVert \Delta \theta \rVert \cos (\phi)
 $$
 
-The minimum occurs when:
+The decrease is largest (most negative) when:
 
 $$
-\cos (\phi) = -1 , \quad \phi = -180 \degree
+\cos (\phi) = -1 , \quad \phi = 180 \degree
 $$
 
 Thus:
@@ -187,20 +187,20 @@ $$
 \end{align*}
 $$
 
-#### 1.2 Implicit Gradient Descend (Backward euler on quadratic)
+#### 1.2 Implicit Gradient Descent (Backward Euler on Quadratic)
 
 Implicit gradient descent uses the second-order Taylor approximation.
 
 Unlike explicit GD, which uses:
 
 $$
-\theta_{k+1} = \theta{k} - \eta \nabla L_k
+\theta_{k+1} = \theta_{k} - \eta \nabla L_k
 $$
 
 Implicit GD uses:
 
 $$
-\theta_{k+1} = \theta{k} - \eta \nabla L_{k+1}
+\theta_{k+1} = \theta_{k} - \eta \nabla L_{k+1}
 $$
 
 This means we predict where the next point will be, compute the gradient there,
@@ -220,32 +220,32 @@ Substitute into the update rule:
 
 $$
 \begin{align*}
-  \theta_{k+1} &= \theta{k} - \eta \nabla L_{k+1} \\
-  &= \theta{k} - \eta (H \theta_{k+1} - b) \\
-  &= \theta{k} - \eta H \theta_{k+1} + \eta b
+  \theta_{k+1} &= \theta_{k} - \eta \nabla L_{k+1} \\
+  &= \theta_{k} - \eta (H \theta_{k+1} - b) \\
+  &= \theta_{k} - \eta H \theta_{k+1} + \eta b
 \end{align*}
 $$
 
 $$
 \begin{align*}
-  \theta_{k+1} + \eta H \theta_{k+1} = \theta{k} + \eta b \\
-  (I + \eta H)(\theta_{k+1}) = \theta{k} + \eta b \\
+  \theta_{k+1} + \eta H \theta_{k+1} = \theta_{k} + \eta b \\
+  (I + \eta H)(\theta_{k+1}) = \theta_{k} + \eta b \\
 \end{align*}
 $$
 
 Thus:
 
 $$
-\theta_{k+1} = (I + \eta H)^{-1} (\theta{k} + \eta b)
+\theta_{k+1} = (I + \eta H)^{-1} (\theta_{k} + \eta b)
 $$
 
 Substituting $b = H \theta_k - g$
 
 $$
-\text{Implicit GD:} \quad \theta_{k+1} = (I + \eta H)^{-1} (\theta{k} + \eta H \theta_k - \eta g)
+\text{Implicit GD:} \quad \theta_{k+1} = (I + \eta H)^{-1} (\theta_{k} + \eta H \theta_k - \eta g)
 $$
 
-#### 1.3 Newton Gradient Descend (Newton's Method)
+#### 1.3 Newton Gradient Descent (Newton's Method)
 
 Newton’s method also uses the quadratic approximation, but instead of taking a small step of size $\eta$, it directly jumps to the stationary point where the gradient is zero:
 
@@ -283,26 +283,38 @@ $$
 
 ---
 
-### 2. Convergenceof each discretization types
+### 2. Convergence of each discretization types
 
-#### 2.1 Explicit Gradient Descend (Normal Gradient Descend)
+> **🚧 Planned for the next milestone.**
+> This section will derive the convergence *rates* of each method — formalizing the
+> empirical observation in [Experiment Results](#experiment-results) that Implicit GD
+> behaves like $\tfrac{1}{x^2}$ while Explicit GD behaves like $\tfrac{1}{x}$, and that
+> Newton GD destabilizes once the loss is small. The analysis below is not yet written.
 
-#### 2.2 Implicit Gradient Descend (Backward euler on quadratic)
+#### 2.1 Explicit Gradient Descent (Normal Gradient Descent)
 
-#### 2.3 Newton Gradient Descend (Newton's Method)
+_Planned: linear/sublinear convergence under a fixed step size._
+
+#### 2.2 Implicit Gradient Descent (Backward Euler on Quadratic)
+
+_Planned: stability of the backward-Euler step and its faster long-term rate._
+
+#### 2.3 Newton Gradient Descent (Newton's Method)
+
+_Planned: local quadratic convergence and the source of late-stage instability._
 
 ---
 
-# 2. Components and Fundamental Properties of the Hessian
+## 2. Components and Fundamental Properties of the Hessian
 
-## 2.1 Dimensions and Interpretation of the Hessian
+### 2.1 Dimensions and Interpretation of the Hessian
 
-- **Gradient (First-order derivative):** $\nabla L(\theta) \in \mathbb{R}^n$ ,Describes the slope of $L$
+- **Gradient (First-order derivative):** $\nabla L(\theta) \in \mathbb{R}^n$ — describes the slope of $L$
 
-- **Hessian (Second-order derivative):** $\nabla^2 L(\theta) = H(\theta) \in \mathbb{R}^{n \times n}$ ,Describes the curvature of $L$
+- **Hessian (Second-order derivative):** $\nabla^2 L(\theta) = H(\theta) \in \mathbb{R}^{n \times n}$ — describes the curvature of $L$
 
 <p align="center"  style="text-align: center;">
-  <img src="docs-src\latex\2.1.hessain-dimension.png" alt="Neural Network Overview" width="600px">
+  <img src="docs-src/latex/2.1.hessain-dimension.png" alt="Neural Network Overview" width="600px">
 </p>
 
 <!-- $$
@@ -368,9 +380,9 @@ H(\boldsymbol{\theta})
 \end{bmatrix}
 $$ -->
 
-### 2.2 Sysmetrix Properties
+### 2.2 Symmetry Properties
 
-From Clairaut's Theorem (Equality of Mixed Partials), If mixed second partial derivatives are continuous over a region, then:
+From Clairaut's Theorem (Equality of Mixed Partials), if the mixed second partial derivatives are continuous over a region, then:
 
 $$
 \frac{\partial^2 f(x)} {\partial x_i \partial x_j}
@@ -399,7 +411,7 @@ $$
 - If Q(x) < 0 (Negative Definite), the function is concave and the critical point is a local maximum.
 - If Q(x) takes on both signs (Indefinite), the critical point is a saddle point.
 
-### 2.4 Eigen-decomposit
+### 2.4 Eigen-decomposition
 
 From the Spectral Theorem, if $H \in \mathbb{R}^{n \times n}$ and $H$ is symmetric ($H = H^T$), then:
 
@@ -410,8 +422,8 @@ $$
 
 Proving:
 
-1. $A \in \mathbb{R}^{n \times n}, \lambda \in \mathbb{R}, v \in \mathbb{R}^2$ that $Av = \lambda v \ (1)$
-2. take (1) with $v^\dagger$ from both left size
+1. $A \in \mathbb{R}^{n \times n}, \lambda \in \mathbb{R}, v \in \mathbb{R}^n$ that $Av = \lambda v \ (1)$
+2. take (1) with $v^\dagger$ from the left side
 
 $$
 \begin{array}{l}
@@ -451,7 +463,7 @@ $$
 \forall \lambda \in \mathbb{R}
 $$
 
-7. Using Eigen vector formular:
+7. Using the eigenvector formula:
 
 $$
 (A - \lambda I)v = 0
@@ -459,14 +471,14 @@ $$
 
 We know $A \in \mathbb{R}^{n \times n}, \lambda \in \mathbb{R}$, Thus $\forall (A-\lambda I) \in \mathbb{R}$, Thus $\forall v \in \mathbb{R}$.
 
-### 2.5 Orthogonal of Eigen vector
+### 2.5 Orthogonality of Eigenvectors
 
-From the Spectral Theorem, if $H \in \mathbb{R}^{n \times n}$ and $H$ is symmetric ($H = H^T$), then eigen vector of $H$ will be orthogonal.
+From the Spectral Theorem, if $H \in \mathbb{R}^{n \times n}$ and $H$ is symmetric ($H = H^T$), then the eigenvectors of $H$ are orthogonal.
 
 Proving:
 
 1. Consider $Av_1 = \lambda_1 v_1 \ (1)$ and $Av_2 = \lambda_2 v_2 \ (2)$
-2. Start with $v_1^T (A v_2)$ to substitude $A v_2$:
+2. Start with $v_1^T (A v_2)$ to substitute $A v_2$:
 
 $$
 \begin{array}{l}
@@ -475,13 +487,13 @@ v_1^T (A v_2) = \lambda_2 (v_1^T v_2) \quad (3)
 \end{array}
 $$
 
-3. Since $v^T (A v)$ is sclale 1 x 1, $v^T (A v) = [v^T (A v)]^T$. From (3):
+3. Since $v^T (A v)$ is a scalar (1×1), $v^T (A v) = [v^T (A v)]^T$. From (3):
 
 $$
 \begin{align*}
-(A v_2) &= [v_1^T (A v_2)]^T \\
+v_1^T (A v_2) &= [v_1^T (A v_2)]^T \\
 &= v_2^T A^T v_1 \quad, A \ \text{is symmetric} \\
-&= v_2^T A v_1 \quad, \text{substitude (1)} \\
+&= v_2^T A v_1 \quad, \text{substitute (1)} \\
 &= v_2^T (\lambda_1 v_1) \\
 &= \lambda_1 (v_2^T v_1) \quad (4)
 \end{align*}
@@ -496,9 +508,9 @@ $$
 \end{array}
 $$
 
-5. As spectral's theorem, we know $\lambda_i \in \mathbb{R}, \quad \text{for all } i = 1, \ldots, n ,\quad \mathbf{v}_i \in \mathbb{R}^n, \quad \text{for all } i = 1, \ldots, n$. So $\lambda_1 \ne \lambda_2$, making $(\lambda_1 \ne \lambda_2)$ is non-zero. Thus, $(v_1^T v_2) = 0$ or $v_1 \dot v_2$ = 0. Thus $v_1$ and $v_2$ is orthogonal.
+5. By the Spectral Theorem, we know $\lambda_i \in \mathbb{R}, \quad \text{for all } i = 1, \ldots, n ,\quad \mathbf{v}_i \in \mathbb{R}^n, \quad \text{for all } i = 1, \ldots, n$. For distinct eigenvalues $\lambda_1 \ne \lambda_2$, the factor $(\lambda_1 - \lambda_2)$ is non-zero. Thus $(v_1^T v_2) = 0$, i.e. $v_1 \cdot v_2 = 0$. Therefore $v_1$ and $v_2$ are orthogonal.
 
-### 2.6 Quadratic Form of symmetric Hessain for Eigen-decomposit
+### 2.6 Quadratic Form of a Symmetric Hessian via Eigen-decomposition
 
 The Hessian matrix, $\mathbf{H}$, being symmetric ($\mathbf{H} = \mathbf{H}^T$), can be decomposed via the Spectral Theorem as $\mathbf{H} = \mathbf{Q} \mathbf{\Lambda} \mathbf{Q}^T$. In this decomposition, the eigenvalues ($\lambda_i$) are guaranteed to be real numbers, and the corresponding eigenvectors ($\mathbf{v}_i$), collected in the orthogonal matrix $\mathbf{Q}$, form a basis of principal directions.
 
@@ -513,8 +525,8 @@ Q(x) = x^T H x &= x^T Q \Lambda Q^T x \\
 \end{align*}
 $$
 
-- $\lambda_i$ = Priciple Maginitude.
-- $v_i$ = Priciple Direction.
+- $\lambda_i$ = Principal Magnitude.
+- $v_i$ = Principal Direction.
 - $(v_i^T x)^2$ = Contribution of $x$ in $v_i$ direction.
 
 ---
