@@ -530,3 +530,7 @@ $$
 - $(v_i^T x)^2$ = Contribution of $x$ in $v_i$ direction.
 
 ---
+
+## License
+
+Original code and documentation authored by Jakkarin Promsee are licensed under the [MIT License](LICENSE). Third-party code, assets, datasets, and other materials are not covered by this license; their original terms apply.
